@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>PSI Readings</title>
+        <style>
+                body{
+                    background-color: #423F3E;
+                }
+                #main{
+                    font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
+                    text-align: center;
+                    color: white;
+                }
+                #table {
+                    border-collapse: collapse;
+                    width: 100%;
+                    text-align: center;
+                }
+
+                #table td, th {
+                    padding: 8px;
+                    height:40px;
+                }
+
+                #table tr{
+                    background-color: #423F3E;
+                    color: white;
+                } 
+
+                #table tr:hover {
+                    background-color: #2B2B2B; 
+                }
+
+                #table th {
+                    padding-top: 12px;
+                    padding-bottom: 12px;
+                    background-color: green;
+                    color: white;
+                }
+        </style>
+    </head>
+    <body>
+        <main id="main">
+        <!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script> -->
+        <script src="jquery.min.js"></script>
+        <script>
+            fetch('https://api.data.gov.sg/v1/environment/psi')
+                .then(response => response.json()) //transform data to json
+                .then(data => {
+
+                let timestamp_data = data.items[0].timestamp;
+                let date = new Date(timestamp_data).toLocaleString("en-US");
+                // console.log(date.toLocaleString("en-US"));
+
+                $("#main").append("<h2> Last Updated: "+ date +"</h2>");
+
+                var headers = '';
+                headers += '<tr><th>Metric</th><th>National</th><th>Central</th><th>West</th><th>East</th><th>North</th><th>South</th>'; 
+               
+                $("#table").append(headers);
+                
+                let readingsData = data.items[0].readings;
+
+                var rows = '';
+                const metric = [];
+                
+                for(let r in readingsData){
+                    metric.push(r);
+                }
+
+                for(let i =0; i < metric.length; i++){
+                    rows += '<tr><td>' + metric[i] + '</td><td>'
+                        + readingsData[metric[i]].west +'</td><td>'
+                        + readingsData[metric[i]].central +'</td><td>'
+                        + readingsData[metric[i]].west +'</td><td>'
+                        + readingsData[metric[i]].east +'</td><td>'
+                        + readingsData[metric[i]].north +'</td><td>'
+                        + readingsData[metric[i]].south +'</td></tr>';
+                }
+                $("#table").append(rows);
+        });
+        </script>
+        <table id="table">
+        </table>
+        </main>
+    </body>
+</html>
